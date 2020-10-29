@@ -1,4 +1,6 @@
-# refer: https://www.tensorflow.org/tutorials/images/classification#import_tensorflow_and_other_libraries
+# References:
+# 1. https://www.tensorflow.org/tutorials/images/classification#import_tensorflow_and_other_libraries
+# 2. https://machinelearningmastery.com/how-to-develop-a-convolutional-neural-network-to-classify-photos-of-dogs-and-cats/
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -30,12 +32,15 @@ print('* train dogs: ', train_dogs_count)
 print('* train cats: ', train_cats_count)
 
 batch_size = 32
-img_height = 180
-img_width = 180
+img_height = 256
+img_width = 256
+myseed = 427309
+color = 'rgb'
 
 train_ds = tf.keras.preprocessing.image_dataset_from_directory(
   dataset_dir,
-  seed=123,
+  seed=myseed,
+  color_mode=color,
   image_size=(img_height, img_width),
   batch_size=batch_size)
 
@@ -54,7 +59,8 @@ val_dir = cur_dir + '/meipian-catdog-data/val'
 
 val_ds = tf.keras.preprocessing.image_dataset_from_directory(
   val_dir,
-  seed=123,
+  seed=myseed,
+  color_mode=color,
   image_size=(img_height, img_width),
   batch_size=batch_size)
 
@@ -95,7 +101,7 @@ model = Sequential([
   layers.MaxPooling2D(),
   layers.Conv2D(64, 3, padding='same', activation='relu'),
   layers.MaxPooling2D(),
-  layers.Dropout(0.05),
+  layers.Dropout(0.2),
   layers.Flatten(),
   layers.Dense(128, activation='relu'),
   layers.Dense(num_classes)
@@ -108,32 +114,32 @@ model.compile(optimizer='adam',
 model.summary()
 
 # 开始训练
-epochs=10
-history = model.fit(
+epochs = 10
+model.fit(
   train_ds,
   validation_data=val_ds,
   epochs=epochs
 )
 
-# 测试集
-test_dir = cur_dir + '/meipian-catdog-data/test/'
-outputfile = open("output.csv", "w")
+## 测试集
+#test_dir = cur_dir + '/meipian-catdog-data/test/'
+#outputfile = open("output.csv", "w")
 
 ## FIXME 写死了 2000 张
-for i in range(2000):
-	img_path = test_dir + str(i) + '.jpg'
-	img = keras.preprocessing.image.load_img(
-    		img_path, target_size=(img_height, img_width)
-	)
-	img_array = keras.preprocessing.image.img_to_array(img)
-	img_array = tf.expand_dims(img_array, 0) # Create a batch
-
-	predictions = model.predict(img_array)
-	score = tf.nn.softmax(predictions[0])
-	
-	class_num = 1 if class_names[np.argmax(score)] == 'dog.jpg' else 0
-	# print("%d,%d,confidence:%.1f" % (i, class_num, 100 * np.max(score)))
-	outputfile.write("%d,%d\n" % (i, class_num))
-
-outputfile.close()
+#for i in range(2000):
+#	img_path = test_dir + str(i) + '.jpg'
+#	img = keras.preprocessing.image.load_img(
+#   		img_path, target_size=(img_height, img_width)
+#	)
+#	img_array = keras.preprocessing.image.img_to_array(img)
+#	img_array = tf.expand_dims(img_array, 0) # Create a batch
+#
+#	predictions = model.predict(img_array)
+#	score = tf.nn.softmax(predictions[0])
+#
+#	class_num = 1 if class_names[np.argmax(score)] == 'dog.jpg' else 0
+#	print("%d,%d,confidence:%.1f" % (i, class_num, 100 * np.max(score)))
+#	outputfile.write("%d,%d\n" % (i, class_num))
+#
+#outputfile.close()
 
