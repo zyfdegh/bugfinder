@@ -6,13 +6,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 import PIL
+import pathlib
 import tensorflow as tf
 
 from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential
-
-import pathlib
+from tensorflow.keras.optimizers import SGD
 
 cur_dir = os.getcwd();
 train_dir = cur_dir + '/meipian-catdog-data/train'
@@ -87,6 +87,9 @@ data_augmentation = keras.Sequential(
                                                               3)),
     layers.experimental.preprocessing.RandomRotation(0.1),
     layers.experimental.preprocessing.RandomZoom(0.1),
+#    layers.experimental.preprocessing.Resizing(0.1),
+#    layers.experimental.preprocessing.RandomWidth(0.1),
+#    layers.experimental.preprocessing.RandomHeight(0.1)
   ]
 )
 
@@ -95,15 +98,20 @@ data_augmentation = keras.Sequential(
 model = Sequential([
   data_augmentation,
   layers.experimental.preprocessing.Rescaling(1./255),
-  layers.Conv2D(16, 3, padding='same', activation='relu'),
+
+  layers.Conv2D(32, (3, 3), padding='same', activation='relu', kernel_initializer='he_uniform'),
   layers.MaxPooling2D(),
-  layers.Conv2D(32, 3, padding='same', activation='relu'),
+
+  layers.Conv2D(64, (3, 3), padding='same', activation='relu', kernel_initializer='he_uniform'),
   layers.MaxPooling2D(),
-  layers.Conv2D(64, 3, padding='same', activation='relu'),
+
+  layers.Conv2D(128, (3, 3), padding='same', activation='relu', kernel_initializer='he_uniform'),
   layers.MaxPooling2D(),
   layers.Dropout(0.2),
+  
   layers.Flatten(),
   layers.Dense(128, activation='relu'),
+
   layers.Dense(num_classes)
 ])
 
@@ -121,25 +129,27 @@ model.fit(
   epochs=epochs
 )
 
-## 测试集
-#test_dir = cur_dir + '/meipian-catdog-data/test/'
-#outputfile = open("output.csv", "w")
+exit()
+#############################################################
+# 测试集
+test_dir = cur_dir + '/meipian-catdog-data/test/'
+outputfile = open("output.csv", "w")
 
-## FIXME 写死了 2000 张
-#for i in range(2000):
-#	img_path = test_dir + str(i) + '.jpg'
-#	img = keras.preprocessing.image.load_img(
-#   		img_path, target_size=(img_height, img_width)
-#	)
-#	img_array = keras.preprocessing.image.img_to_array(img)
-#	img_array = tf.expand_dims(img_array, 0) # Create a batch
-#
-#	predictions = model.predict(img_array)
-#	score = tf.nn.softmax(predictions[0])
-#
-#	class_num = 1 if class_names[np.argmax(score)] == 'dog.jpg' else 0
-#	print("%d,%d,confidence:%.1f" % (i, class_num, 100 * np.max(score)))
-#	outputfile.write("%d,%d\n" % (i, class_num))
-#
-#outputfile.close()
+# FIXME 写死了 2000 张
+for i in range(2000):
+	img_path = test_dir + str(i) + '.jpg'
+	img = keras.preprocessing.image.load_img(
+		img_path, target_size=(img_height, img_width)
+	)
+	img_array = keras.preprocessing.image.img_to_array(img)
+	img_array = tf.expand_dims(img_array, 0) # Create a batch
+
+	predictions = model.predict(img_array)
+	score = tf.nn.softmax(predictions[0])
+
+	class_num = 1 if class_names[np.argmax(score)] == 'dog.jpg' else 0
+	print("%d,%d,confidence:%.1f" % (i, class_num, 100 * np.max(score)))
+	outputfile.write("%d,%d\n" % (i, class_num))
+
+outputfile.close()
 
