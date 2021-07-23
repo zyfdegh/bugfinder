@@ -2,28 +2,37 @@
 
 ## macOS
 
-Prerequisite
+My running machine
 
-* pip > 19.0
-* python > 3.5, <3.8
-* macOS > 10.12.6
+* macOS 11.4
+* python 3.9.5
+* pip 21.1.1
+
+* tensorflow 2.5.0
+* numpy 1.19.5
+* cuda (optional)
 
 ```sh
-$ pip3 install tensorflow
+$ pip3 install tensorflow \
+    matplotlib \
+    keras \
 ```
 
 ## dataset
+Kaggle Cats and Dogs Dataset
 
+Download Page https://www.microsoft.com/en-us/download/details.aspx?id=54765
+
+Unzip and move files to this project root like this
 ```sh
-$ tree meipian-catdog-data
-meipian-catdog-data
-├── test
+catdog-data
+├── test/       # 2000 *.jpg
 ├── train
-│   ├── cat.jpg
-│   └── dog.jpg
+│   ├── cat/   # 10000 dog.*.jpg
+│   └── dog/   # 10000 cat.*.jpg 
 └── val
-    ├── cat.jpg
-    └── dog.jpg
+    ├── cat/   # 1000 cat.*.jpg
+    └── dog/   # 1000 dog.*.jpg
 ```
 
 ## Reference

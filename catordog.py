@@ -15,9 +15,11 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.optimizers import SGD
 
 cur_dir = os.getcwd();
-train_dir = cur_dir + '/meipian-catdog-data/train'
-train_dogs = 'dog.jpg/*.jpg'
-train_cats = 'cat.jpg/*.jpg'
+train_dir = cur_dir + '/catdog-data/train'
+train_dogs = 'dog/*.jpg'
+train_cats = 'cat/*.jpg'
+
+print('** using train directory: ', train_dir)
 
 # 训练集
 dataset_dir = tf.keras.utils.get_file(train_dir, origin='')
@@ -39,6 +41,7 @@ color = 'rgb'
 
 train_ds = tf.keras.preprocessing.image_dataset_from_directory(
   dataset_dir,
+  # subset="training",
   seed=myseed,
   color_mode=color,
   image_size=(img_height, img_width),
@@ -53,12 +56,12 @@ for image_batch, labels_batch in train_ds:
   break
 
 # 验证集
-val_dir = cur_dir + '/meipian-catdog-data/val'
-# val_dogs = 'dog.*.jpg'
-# val_cats = 'cat.*.jpg'
+val_dir = cur_dir + '/catdog-data/val'
+print('** using validate directory: ', val_dir)
 
 val_ds = tf.keras.preprocessing.image_dataset_from_directory(
   val_dir,
+  # subset="validation",
   seed=myseed,
   color_mode=color,
   image_size=(img_height, img_width),
@@ -122,7 +125,7 @@ model.compile(optimizer='adam',
 model.summary()
 
 # 开始训练
-epochs = 10
+epochs = 3
 model.fit(
   train_ds,
   validation_data=val_ds,
@@ -132,7 +135,7 @@ model.fit(
 exit()
 #############################################################
 # 测试集
-test_dir = cur_dir + '/meipian-catdog-data/test/'
+test_dir = cur_dir + '/catdog-data/test/'
 outputfile = open("output.csv", "w")
 
 # FIXME 写死了 2000 张
