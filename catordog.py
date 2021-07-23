@@ -132,14 +132,13 @@ model.fit(
   epochs=epochs
 )
 
-exit()
 #############################################################
 # 测试集
 test_dir = cur_dir + '/catdog-data/test/'
 outputfile = open("output.csv", "w")
 
 # FIXME 写死了 2000 张
-for i in range(2000):
+for i in range(1):
 	img_path = test_dir + str(i) + '.jpg'
 	img = keras.preprocessing.image.load_img(
 		img_path, target_size=(img_height, img_width)
@@ -150,7 +149,7 @@ for i in range(2000):
 	predictions = model.predict(img_array)
 	score = tf.nn.softmax(predictions[0])
 
-	class_num = 1 if class_names[np.argmax(score)] == 'dog.jpg' else 0
+	class_num = 1 if class_names[np.argmax(score)] == 'dog' else 0
 	print("%d,%d,confidence:%.1f" % (i, class_num, 100 * np.max(score)))
 	outputfile.write("%d,%d\n" % (i, class_num))
 
