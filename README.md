@@ -18,6 +18,12 @@ $ pip3 install tensorflow \
     keras \
 ```
 
+## Docker
+```sh
+docker build -t zyfdedh/catordog .
+docker run zyfdedh/catordog
+```
+
 ## dataset
 Kaggle Cats and Dogs Dataset
 
