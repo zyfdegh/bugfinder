@@ -1,4 +1,4 @@
 #!/bin/sh
 
-python3 catordog.py
+python3 bugfinder.py
 
